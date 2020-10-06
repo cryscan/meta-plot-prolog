@@ -328,12 +328,44 @@ result(S1, marry(C1, C2), S2) :-
                    S2).
     % all_hate(Sb, C1, C2, Sc),
     % all_hate(Sc, C2, C1, S2).
+beat(prelude-1, 0).
+beat(prelude-2, 0).
+beat(rising, 1).
+beat(climax, 2).
+beat(ending-1, 3).
+beat(ending-2, 3).
 
-progress(prelude-1, 1).
-progress(prelude-2, 1).
-progress(rising, 2).
-progress(climax, 3).
-progress(ending, 4).
+premise(prelude-1, S) :-
+    holds(dead(dragon, false), S),
+    holds(kidnaped(princess, false), S).
+
+premise(prelude-2, S) :-
+    holds(dead(dragon, false), S),
+    holds(kidnaped(princess, false), S).
+
+premise(rising, S) :-
+    holds(dead(dragon, false), S),
+    holds(kidnaped(princess, true), S).
+
+premise(climax, S) :-
+    holds(dead(dragon, false), S).
+
+premise(ending-1, S) :-
+    holds(dead(dragon, true), S),
+    (   holds(affection(princess-troy, true), S)
+    ;   holds(affection(princess-felix, true), S)
+    ).
+
+premise(ending-2, S) :-
+    holds(dead(dragon, true), S).
+
+candidate_beats(Situation, Beats) :-
+    setof(Beat, premise(Beat, Situation), Beats).
+
+candidate_beats(Situation, Phase, Beats) :-
+    setof(Beat,
+          (premise(Beat, Situation), beat(Beat, Phase)),
+          Beats).
 
 goal(prelude-1, kidnaped(princess, true)).
 goal(prelude-1, hatred(troy-dragon, true)).
@@ -353,10 +385,14 @@ goal(climax, protection(dungeon, true)).
 goal(climax, protection(wood, true)).
 goal(climax, protection(heritage, true)).
 
-goal(ending, at(troy, castle)).
-goal(ending, at(felix, castle)).
-goal(ending, at(princess, castle)).
-goal(ending, married(princess, true)).
+goal(ending-1, at(troy, castle)).
+goal(ending-1, at(felix, castle)).
+goal(ending-1, at(princess, castle)).
+goal(ending-1, married(princess, true)).
+
+goal(ending-2, dead(dragon, true)).
+goal(ending-2, married(princess, false)).
+goal(ending-2, kidnaped(princess, false)).
 
 % The Goal Situation is the (ordered) set of fluents that
 % describe a goal
@@ -368,6 +404,11 @@ goal_situation(Beat, S) :-
 % not described in Goal
 reached_goal(GoalSituation, Situation) :-
     ord_subtract(GoalSituation, Situation, []). % [] -> no goals not in Situation
+goal_beats(Situation, Phase, Beats) :-
+    setof(Beat,
+          (beat(Beat, Phase), goal_situation(Beat, S), reached_goal(S, Situation)),
+          Beats).
+
 :- use_module(library(heaps)).
 
 % Use to order search
@@ -395,7 +436,6 @@ open_add_pairs(AccCost, H1, Sits, [S-P|T], G, H2) :-
 % Convenience predicate to heap
 get_from_open_nodes(H1, Sit-Process, H2) :-
     get_from_heap(H1, _Priority, Sit-Process, H2).
-
 % convenience predicate to start a_star
 % and reverse the process for natural reading
 plan(Beat, Sit, Process) :-

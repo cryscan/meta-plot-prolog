@@ -65,6 +65,7 @@ void listen() {
   std::string line;
 
   char buf[1024] = {0};
+  Beat beats[8];
   Action actions[32];
 
   while (std::getline(std::cin, line)) {
@@ -75,6 +76,9 @@ void listen() {
 
     if (line == "exit")
       return;
+
+    if (line == "restart")
+      init_situation();
 
     if (sscanf(line.c_str(), "home %s", a1) == 1) {
       get_home(a1, buf);
@@ -138,6 +142,36 @@ void listen() {
       int count;
       get_plan_actions(actions, count);
       print_actions(actions, count);
+    }
+
+    if (line == "candidates") {
+      int count;
+      get_candidate_beats(beats, count);
+
+      for (int i = 0; i < count; ++i) {
+        char *beat = beats[i].name;
+        std::cout << beat << std::endl;
+      }
+    }
+
+    int phase;
+    if (sscanf(line.c_str(), "candidates %d", &phase) > 0) {
+      int count;
+      get_candidate_beats_phase(phase, beats, count);
+
+      for (int i = 0; i < count; ++i) {
+        char *beat = beats[i].name;
+        std::cout << beat << std::endl;
+      }
+    }
+    if (sscanf(line.c_str(), "goals %d", &phase) > 0) {
+      int count;
+      get_goal_beats_phase(phase, beats, count);
+
+      for (int i = 0; i < count; ++i) {
+        char *beat = beats[i].name;
+        std::cout << beat << std::endl;
+      }
     }
 
     std::cout << "###---" << std::endl;

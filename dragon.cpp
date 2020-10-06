@@ -287,14 +287,94 @@ bool get_plan_actions(Action *result, int &count) {
     return false;
 
   try {
+    count = 0;
+
     if (plan->next_solution()) {
       PlTail list(*process);
       PlTerm action;
-
-      count = 0;
       while (list.next(action)) {
         Action &dest = result[count];
         parse_action(action, dest);
+        ++count;
+      }
+
+      return true;
+    }
+  } catch (PlException &ex) {
+    std::cerr << (char *)ex << std::endl;
+  }
+  return false;
+}
+
+bool get_candidate_beats(Beat *result, int &count) {
+  try {
+    PlTerm beats;
+
+    PlTermv candidates(2);
+    candidates[0] = *situation;
+    candidates[1] = beats;
+
+    PlQuery query("candidate_beats", candidates);
+    count = 0;
+    if (query.next_solution()) {
+      PlTail list(beats);
+      PlTerm beat;
+      while (list.next(beat)) {
+        strcpy(result[count].name, (char *)beat);
+        ++count;
+      }
+
+      return true;
+    }
+  } catch (PlException &ex) {
+    std::cerr << (char *)ex << std::endl;
+  }
+  return false;
+}
+
+bool get_candidate_beats_phase(int phase, Beat *result, int &count) {
+  try {
+    PlTerm beats;
+
+    PlTermv candidates(3);
+    candidates[0] = *situation;
+    candidates[1] = PlTerm((long)phase);
+    candidates[2] = beats;
+
+    PlQuery query("candidate_beats", candidates);
+    count = 0;
+    if (query.next_solution()) {
+      PlTail list(beats);
+      PlTerm beat;
+      while (list.next(beat)) {
+        strcpy(result[count].name, (char *)beat);
+        ++count;
+      }
+
+      return true;
+    }
+  } catch (PlException &ex) {
+    std::cerr << (char *)ex << std::endl;
+  }
+  return false;
+}
+
+bool get_goal_beats_phase(int phase, Beat *result, int &count) {
+  try {
+    PlTerm beats;
+
+    PlTermv goal(3);
+    goal[0] = *situation;
+    goal[1] = PlTerm((long)phase);
+    goal[2] = beats;
+
+    PlQuery query("goal_beats", goal);
+    count = 0;
+    if (query.next_solution()) {
+      PlTail list(beats);
+      PlTerm beat;
+      while (list.next(beat)) {
+        strcpy(result[count].name, (char *)beat);
         ++count;
       }
 

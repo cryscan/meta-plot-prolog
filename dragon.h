@@ -10,6 +10,10 @@ struct Action {
   char a3[16];
 };
 
+struct Beat {
+  char name[16];
+};
+
 extern "C" {
 EXPORTED void init_engine(char *name);
 
@@ -30,6 +34,10 @@ EXPORTED bool execute_action(const Action *actions, int count);
 
 EXPORTED void init_plan(const char *beat);
 EXPORTED bool get_plan_actions(Action *result, int &count);
+
+EXPORTED bool get_candidate_beats(Beat *result, int &count);
+EXPORTED bool get_candidate_beats_phase(int phase, Beat *result, int &count);
+EXPORTED bool get_goal_beats_phase(int phase, Beat *result, int &count);
 }
 
 #endif

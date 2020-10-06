@@ -1,0 +1,85 @@
+{
+    "tasks": [
+        {
+            "type": "shell",
+            "label": "Build Embedded",
+            "command": "g++",
+            "args": [
+                "-L.",
+                "-o",
+                "main",
+                "main.cpp",
+                "-ldragon"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": "build"
+        },
+        {
+            "type": "shell",
+            "label": "Build Standalone",
+            "command": "swipl-ld",
+            "args": [
+                "-o",
+                "main",
+                "main.cpp",
+                "dragon.cpp",
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": "build"
+        },
+        {
+            "type": "shell",
+            "label": "Build Dragon",
+            "command": "swipl-ld",
+            "args": [
+                "-embed-shared",
+                "-fPIC",
+                "-o",
+                "libdragon.so",
+                "dragon.cpp",
+                "dragon.pl",
+                "-I\"/usr/lib/swi-prolog/include/\""
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": "build"
+        },
+        {
+            "type": "shell",
+            "label": "Build Robbie",
+            "command": "swipl-ld",
+            "args": [
+                "-embed-shared",
+                "-fPIC",
+                "-o",
+                "librobbie.so",
+                "robbie.cpp",
+                "robbie.pl",
+                "simple.pl",
+                "-I\"/usr/lib/swi-prolog/include/\""
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": "build"
+        },
+    ],
+    "version": "2.0.0"
+}

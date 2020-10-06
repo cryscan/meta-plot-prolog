@@ -4,17 +4,23 @@
 #include <memory>
 #include <string>
 
-const char dll_name[] = "libdragon.so";
-static PlEngine engine((char *)dll_name);
+static std::unique_ptr<PlEngine> engine = nullptr;
+static std::unique_ptr<PlTerm> situation = nullptr;
 
-static PlTerm situation;
+static std::unique_ptr<PlQuery> plan = nullptr;
+static std::unique_ptr<PlTerm> process = nullptr;
+
+void init_engine(char *name) {
+  engine = std::make_unique<PlEngine>(name);
+  process = std::make_unique<PlTerm>();
+}
 
 bool init_situation() {
   try {
     PlTermv av(1);
     PlQuery query("s0", av);
     if (query.next_solution()) {
-      situation = av[0];
+      situation = std::make_unique<PlTerm>(av[0]);
       return true;
     }
   } catch (PlException &ex) {
@@ -68,7 +74,7 @@ bool get_location(const char *ch, char *result) {
 
     PlTermv holds(2);
     holds[0] = PlCompound("at", at);
-    holds[1] = situation;
+    holds[1] = *situation;
 
     PlQuery query("holds", holds);
     if (query.next_solution()) {
@@ -100,7 +106,7 @@ bool get_affection(const char *ch1, const char *ch2, bool &result) {
 
     PlTermv holds(2);
     holds[0] = PlCompound("affection", affection);
-    holds[1] = situation;
+    holds[1] = *situation;
 
     PlQuery query("holds", holds);
     if (query.next_solution()) {
@@ -121,7 +127,7 @@ bool get_hatred(const char *ch1, const char *ch2, bool &result) {
 
     PlTermv holds(2);
     holds[0] = PlCompound("hatred", hatred);
-    holds[1] = situation;
+    holds[1] = *situation;
 
     PlQuery query("holds", holds);
     if (query.next_solution()) {
@@ -140,7 +146,7 @@ bool get_kidnaped(const char *ch, bool &result) {
 
     PlTermv holds(2);
     holds[0] = PlCompound("kidnaped", kidnaped);
-    holds[1] = situation;
+    holds[1] = *situation;
 
     PlQuery query("holds", holds);
     if (query.next_solution()) {
@@ -159,7 +165,7 @@ bool get_married(const char *ch, bool &result) {
 
     PlTermv holds(2);
     holds[0] = PlCompound("married", married);
-    holds[1] = situation;
+    holds[1] = *situation;
 
     PlQuery query("holds", holds);
     if (query.next_solution()) {
@@ -178,7 +184,7 @@ bool get_dead(const char *ch, bool &result) {
 
     PlTermv holds(2);
     holds[0] = PlCompound("dead", dead);
-    holds[1] = situation;
+    holds[1] = *situation;
 
     PlQuery query("holds", holds);
     if (query.next_solution()) {
@@ -207,7 +213,7 @@ void get_actions(Action *result, int &count) {
 
     PlTermv poss(2);
     poss[0] = action;
-    poss[1] = situation;
+    poss[1] = *situation;
 
     PlQuery query("poss", poss);
     count = 0;
@@ -238,19 +244,20 @@ bool execute_action(const Action *actions, int count) {
       str += ", ";
   }
   str += "]";
+  // std::cout << str << std::endl;
 
   try {
-    // std::cout << str << std::endl;
     PlCompound action_list(str.c_str());
 
     PlTermv execute(3);
-    execute[0] = situation;
+    execute[0] = *situation;
     execute[1] = action_list;
 
     PlQuery query("execute_process", execute);
     if (query.next_solution()) {
-      // std::cout << (char *)execute[2] << std::endl;
-      situation = execute[2];
+      // std::cerr << (char *)execute[2] << std::endl;
+      situation = std::make_unique<PlTerm>(execute[2]);
+      // std::cerr << (char *)*situation << std::endl;
       return true;
     }
   } catch (PlException &ex) {
@@ -259,18 +266,15 @@ bool execute_action(const Action *actions, int count) {
   return false;
 }
 
-static std::unique_ptr<PlQuery> plan = nullptr;
-static PlTerm process;
-
 void init_plan(const char *beat) {
   try {
     PlTerm sit;
 
     PlTermv _plan(4);
     _plan[0] = PlCompound(beat);
-    _plan[1] = situation;
+    _plan[1] = *situation;
     _plan[2] = sit;
-    _plan[3] = process;
+    _plan[3] = *process;
 
     plan = std::make_unique<PlQuery>("plan", _plan);
   } catch (PlException &ex) {
@@ -284,7 +288,7 @@ bool get_plan_actions(Action *result, int &count) {
 
   try {
     if (plan->next_solution()) {
-      PlTail list(process);
+      PlTail list(*process);
       PlTerm action;
 
       count = 0;

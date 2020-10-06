@@ -11,6 +11,8 @@ struct Action {
 };
 
 extern "C" {
+EXPORTED void init_engine(char *name);
+
 EXPORTED bool init_situation();
 
 EXPORTED bool get_home(const char *ch, char *result);

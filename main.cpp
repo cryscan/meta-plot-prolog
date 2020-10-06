@@ -1,4 +1,6 @@
 #include "dragon.h"
+#include <cstdio>
+#include <cstring>
 #include <iostream>
 
 void print_actions(const Action *actions, int count) {
@@ -9,7 +11,7 @@ void print_actions(const Action *actions, int count) {
   }
 }
 
-int main(int argc, char **argv) {
+void test() {
   init_situation();
 
   char buffer[2048] = {0};
@@ -57,4 +59,96 @@ int main(int argc, char **argv) {
   if (!get_plan_actions(actions, count))
     std::cout << "shit!" << std::endl;
   print_actions(actions, count);
+}
+
+void listen() {
+  std::string line;
+
+  char buf[1024] = {0};
+  Action actions[32];
+
+  while (std::getline(std::cin, line)) {
+    char a1[16] = {0};
+    char a2[16] = {0};
+    char a3[16] = {0};
+    char a4[16] = {0};
+
+    if (line == "exit")
+      return;
+
+    if (sscanf(line.c_str(), "home %s", a1) == 1) {
+      get_home(a1, buf);
+      std::cout << buf << std::endl;
+    }
+    if (sscanf(line.c_str(), "level %s", a1) == 1) {
+      int result;
+      get_level(a1, result);
+      std::cout << result << std::endl;
+    }
+
+    if (sscanf(line.c_str(), "location %s", a1) == 1) {
+      get_location(a1, buf);
+      std::cout << buf << std::endl;
+    }
+    if (sscanf(line.c_str(), "affection %s %s", a1, a2) == 2) {
+      bool result;
+      get_affection(a1, a2, result);
+      std::cout << result << std::endl;
+    }
+    if (sscanf(line.c_str(), "hatred %s %s", a1, a2) == 2) {
+      bool result;
+      get_hatred(a1, a2, result);
+      std::cout << result << std::endl;
+    }
+    if (sscanf(line.c_str(), "kidnaped %s", a1) == 1) {
+      bool result;
+      get_kidnaped(a1, result);
+      std::cout << result << std::endl;
+    }
+    if (sscanf(line.c_str(), "married %s", a1) == 1) {
+      bool result;
+      get_married(a1, result);
+      std::cout << result << std::endl;
+    }
+    if (sscanf(line.c_str(), "dead %s", a1) == 1) {
+      bool result;
+      get_dead(a1, result);
+      std::cout << result << std::endl;
+    }
+
+    if (line == "actions") {
+      int count;
+      get_actions(actions, count);
+      print_actions(actions, count);
+    }
+    if (sscanf(line.c_str(), "execute %s %s %s %s", a1, a2, a3, a4) > 0) {
+      Action action = {0};
+      strcpy(action.name, a1);
+      strcpy(action.a1, a2);
+      strcpy(action.a2, a3);
+      strcpy(action.a3, a4);
+      if (!execute_action(&action, 1))
+        std::cerr << "fail" << std::endl;
+    }
+
+    if (sscanf(line.c_str(), "plan %s", a1) > 0) {
+      init_plan(a1);
+    }
+    if (line == "predict") {
+      int count;
+      get_plan_actions(actions, count);
+      print_actions(actions, count);
+    }
+
+    std::cout << "###---" << std::endl;
+  }
+}
+
+int main(int argc, char **argv) {
+  char name[32];
+  strcpy(name, argv[0]);
+  init_engine(name);
+
+  init_situation();
+  listen();
 }

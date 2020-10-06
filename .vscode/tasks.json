@@ -28,6 +28,7 @@
                 "main",
                 "main.cpp",
                 "dragon.cpp",
+                "dragon.pl",
             ],
             "options": {
                 "cwd": "${workspaceFolder}"

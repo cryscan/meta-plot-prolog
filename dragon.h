@@ -35,6 +35,7 @@ EXPORTED bool execute_action(const Action *actions, int count);
 EXPORTED void init_plan(const char *beat);
 EXPORTED bool get_plan_actions(const char *beat, Action *result, int &count);
 
+EXPORTED bool get_phase_beats(int phase, Beat *result, int &count);
 EXPORTED bool get_candidate_beats(Beat *result, int &count);
 EXPORTED bool get_candidate_beats_phase(int phase, Beat *result, int &count);
 EXPORTED bool get_goal_beats_phase(int phase, Beat *result, int &count);

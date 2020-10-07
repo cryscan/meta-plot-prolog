@@ -311,6 +311,32 @@ bool get_plan_actions(const char *beat, Action *result, int &count) {
   return false;
 }
 
+bool get_phase_beats(int phase, Beat *result, int &count) {
+  try {
+    PlTerm beats;
+
+    PlTermv candidates(2);
+    candidates[0] = PlTerm((long)phase);
+    candidates[1] = beats;
+
+    PlQuery query("beats", candidates);
+    count = 0;
+    if (query.next_solution()) {
+      PlTail list(beats);
+      PlTerm beat;
+      while (list.next(beat)) {
+        strcpy(result[count].name, (char *)beat);
+        ++count;
+      }
+
+      return true;
+    }
+  } catch (PlException &ex) {
+    std::cerr << (char *)ex << std::endl;
+  }
+  return false;
+}
+
 bool get_candidate_beats(Beat *result, int &count) {
   try {
     PlTerm beats;

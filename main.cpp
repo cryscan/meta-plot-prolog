@@ -157,7 +157,7 @@ void listen() {
     int phase;
     if (sscanf(line.c_str(), "candidates %d", &phase) > 0) {
       int count;
-      get_candidate_beats_phase(phase, beats, count);
+      get_phase_beats(phase, beats, count);
 
       for (int i = 0; i < count; ++i) {
         char *beat = beats[i].name;

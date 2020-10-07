@@ -335,6 +335,9 @@ beat(climax, 2).
 beat(ending-1, 3).
 beat(ending-2, 3).
 
+beats(Phase, Beats) :-
+    setof(Beat, beat(Beat, Phase), Beats).
+
 premise(prelude-1, S) :-
     holds(dead(dragon, false), S),
     holds(kidnaped(princess, false), S).

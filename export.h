@@ -2,6 +2,7 @@
 #define _EXPORT_H_
 
 // Define EXPORTED for any platform
+/*
 #if defined _WIN32 || defined __CYGWIN__
 #ifdef WIN_EXPORT
 #ifdef __GNUC__
@@ -30,5 +31,7 @@
 #define NOT_EXPORTED
 #endif
 #endif
+*/
+#define EXPORTED
 
 #endif

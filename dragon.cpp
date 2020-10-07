@@ -282,15 +282,20 @@ void init_plan(const char *beat) {
   }
 }
 
-bool get_plan_actions(Action *result, int &count) {
-  if (!plan)
-    return false;
-
+bool get_plan_actions(const char *beat, Action *result, int &count) {
   try {
-    count = 0;
+    PlTerm process;
 
-    if (plan->next_solution()) {
-      PlTail list(*process);
+    PlTermv _plan(4);
+    _plan[0] = PlCompound(beat);
+    _plan[1] = *situation;
+    _plan[3] = process;
+
+    PlQuery plan("plan", _plan);
+
+    count = 0;
+    if (plan.next_solution()) {
+      PlTail list(process);
       PlTerm action;
       while (list.next(action)) {
         Action &dest = result[count];

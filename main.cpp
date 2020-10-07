@@ -55,8 +55,8 @@ void test() {
     std::cout << "shit!" << std::endl;
 
   std::cout << std::endl;
-  init_plan("prelude-1");
-  if (!get_plan_actions(actions, count))
+  // init_plan("prelude-1");
+  if (!get_plan_actions("prelude-1", actions, count))
     std::cout << "shit!" << std::endl;
   print_actions(actions, count);
 }
@@ -135,12 +135,12 @@ void listen() {
         std::cerr << "fail" << std::endl;
     }
 
-    if (sscanf(line.c_str(), "plan %s", a1) > 0) {
+    /*if (sscanf(line.c_str(), "plan %s", a1) > 0) {
       init_plan(a1);
-    }
-    if (line == "predict") {
+    }*/
+    if (sscanf(line.c_str(), "predict %s", a1) > 0) {
       int count;
-      get_plan_actions(actions, count);
+      get_plan_actions(a1, actions, count);
       print_actions(actions, count);
     }
 

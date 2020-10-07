@@ -375,15 +375,15 @@ goal(prelude-2, hatred(felix-dragon, true)).
 
 goal(rising, hatred(troy-dragon, true)).
 goal(rising, hatred(felix-dragon, true)).
-goal(rising, protection(castle, true)).
 goal(rising, kidnaped(princess, true)).
+
+goal(rising, protection(castle, true)).
+goal(rising, protection(dungeon, true)).
+goal(rising, protection(wood, true)).
+goal(rising, protection(heritage, true)).
 
 goal(climax, dead(dragon, true)).
 goal(climax, kidnaped(princess, false)).
-
-goal(climax, protection(dungeon, true)).
-goal(climax, protection(wood, true)).
-goal(climax, protection(heritage, true)).
 
 goal(ending-1, at(troy, castle)).
 goal(ending-1, at(felix, castle)).

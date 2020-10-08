@@ -74,10 +74,10 @@ void listen() {
     char a3[16] = {0};
     char a4[16] = {0};
 
-    if (line == "exit")
+    if (strncmp(line.c_str(), "exit", 4) == 0)
       return;
 
-    if (line == "restart")
+    if (strncmp(line.c_str(), "restart", 7) == 0)
       init_situation();
 
     if (sscanf(line.c_str(), "home %s", a1) == 1) {
@@ -120,7 +120,7 @@ void listen() {
       std::cout << result << std::endl;
     }
 
-    if (line == "actions") {
+    if (strncmp(line.c_str(), "actions", 7) == 0) {
       int count;
       get_actions(actions, count);
       print_actions(actions, count);
